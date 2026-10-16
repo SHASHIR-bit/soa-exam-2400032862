@@ -1,0 +1,29 @@
+# Eclipse Workspace Metadata
+.metadata/
+
+# Build output
+target/
+**/target/
+build/
+**/build/
+
+# Maven wrapper jar
+.mvn/wrapper/maven-wrapper.jar
+**/.mvn/wrapper/maven-wrapper.jar
+
+# IDE / Editor
+.idea/
+**/.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+**/.vscode/
+.sts4-cache/
+**/.sts4-cache/
+
+# OS / Temporary files
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.log
