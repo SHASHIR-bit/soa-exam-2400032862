@@ -13,6 +13,9 @@ jobs:
   build-and-push:
     name: Build & Push Frontend and Backend
     runs-on: ubuntu-latest
+    env:
+      DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME || secrets.DOCKER_USERNAME || secrets.DOCKER_USER }}
+      DOCKER_PASS: ${{ secrets.DOCKERHUB_TOKEN || secrets.DOCKERHUB_PASSWORD || secrets.DOCKER_PASSWORD || secrets.DOCKER_TOKEN }}
 
     steps:
       - name: Checkout Repository
@@ -27,8 +30,8 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          username: ${{ env.DOCKER_USER }}
+          password: ${{ env.DOCKER_PASS }}
 
       # 1. Build and Push Backend Image (Student ID: 2400032862)
       - name: Build and Push Backend Docker Image
@@ -38,8 +41,8 @@ jobs:
           file: ./backend/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/docker-backend-2400032862:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/docker-backend-2400032862:${{ github.sha }}
+            ${{ env.DOCKER_USER }}/docker-backend-2400032862:latest
+            ${{ env.DOCKER_USER }}/docker-backend-2400032862:${{ github.sha }}
 
       # 2. Build and Push Frontend Image (Student ID: 2400032862)
       - name: Build and Push Frontend Docker Image
@@ -49,5 +52,5 @@ jobs:
           file: ./frontend/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/docker-frontend-2400032862:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/docker-frontend-2400032862:${{ github.sha }}
+            ${{ env.DOCKER_USER }}/docker-frontend-2400032862:latest
+            ${{ env.DOCKER_USER }}/docker-frontend-2400032862:${{ github.sha }}
