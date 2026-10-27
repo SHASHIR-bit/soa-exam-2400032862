@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database Container
+  postgres:
+    image: postgres:15-alpine
+    container_name: docker-postgres-2400032862
+    restart: always
+    environment:
+      POSTGRES_DB: exam_2400032862
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: dsp1672006
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d exam_2400032862"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  # Spring Boot Backend Container
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: ${DOCKER_USERNAME:-shashirbit}/docker-backend-2400032862:latest
+    container_name: docker-backend-2400032862
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: 8080
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: exam_2400032862
+      DB_USER: postgres
+      DB_PASSWORD: dsp1672006
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  # Nginx Frontend Container
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: ${DOCKER_USERNAME:-shashirbit}/docker-frontend-2400032862:latest
+    container_name: docker-frontend-2400032862
+    restart: always
+    ports:
+      - "80:80"
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
